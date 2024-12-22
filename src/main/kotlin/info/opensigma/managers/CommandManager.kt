@@ -10,25 +10,9 @@ package info.opensigma.managers
 //import mapped.*
 //import net.minecraft.network.play.client.CChatMessagePacket
 //import net.minecraft.network.play.client.CTabCompletePacket
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket
 
-import info.opensigma.command.impl.Bind
-import info.opensigma.command.impl.ClearChat
-import info.opensigma.command.impl.Config
-import info.opensigma.command.impl.Damage
-import info.opensigma.command.impl.Enchant
-import info.opensigma.command.impl.Enemy
-import info.opensigma.command.impl.EntityDesync
-import info.opensigma.command.impl.Friend
-import info.opensigma.command.impl.HClip
-import info.opensigma.command.impl.Help
-import info.opensigma.command.impl.HighDPI
-import info.opensigma.command.impl.Insult
-import info.opensigma.command.impl.KillPotion
-import info.opensigma.command.impl.Panic
-import info.opensigma.command.impl.Peek
-import info.opensigma.command.impl.TP
-import info.opensigma.command.impl.Toggle
-import info.opensigma.command.impl.VClip
+import info.opensigma.command.impl.*
 import info.opensigma.command.type.Command
 import java.util.*
 
@@ -73,16 +57,16 @@ class CommandManager {
         return this.commands
     }
 
-    fun method30231(var1: String): Command? {
-        for (var5 in this.commands) {
-            if (var5.name.equals(var1, ignoreCase = true)) {
-                return var5
+    fun getCommandByName(name: String): Command? {
+        for (command in this.commands) {
+            if (command.name.equals(name, ignoreCase = true)) {
+                return command
             }
         }
 
         for (var5 in this.commands) {
             for (var9 in var5.alias) {
-                if (var9.equals(var1, ignoreCase = true)) {
+                if (var9.equals(name, ignoreCase = true)) {
                     return var5
                 }
             }
@@ -91,8 +75,8 @@ class CommandManager {
         return null
     }
 
-    fun method30234(var1: String) {
-        MultiUtilities.addChatMessage(getPrefix() + " Invalid command \"" + CHAT_COMMAND_CHAR + var1 + "\"")
+    fun invalidCommandHandler(name: String) {
+        MultiUtilities.addChatMessage(getPrefix() + " Invalid command \"" + CHAT_COMMAND_CHAR + name + "\"")
         MultiUtilities.addChatMessage(getPrefix() + " Use \"" + CHAT_COMMAND_CHAR + "help\" for a list of commands.")
     }
 
@@ -104,10 +88,10 @@ class CommandManager {
             var var3 = ""
 
             for (var4 in 0..7) {
-                var3 = var3 + " "
+                var3 = "$var3 "
             }
 
-            return var3 + "§7"
+            return "$var3§7"
         }
     }
 
@@ -127,11 +111,11 @@ class CommandManager {
     @EventTarget
     private fun onSendPacket(var1: SendPacketEvent) {
         if (Client.getInstance().clientMode != ClientMode.NOADDONS) {
-            if (var1.packet is CChatMessagePacket) {
-                val var4 = var1.packet as CChatMessagePacket
+            if (var1.packet is ChatMessageC2SPacket) {
+                val var4 = var1.packet as ChatMessageC2SPacket
                 val var5 = var4.message
                 if (var5.startsWith(CHAT_COMMAND_CHAR, ignoreCase = true) && var5.substring(1).startsWith(CHAT_COMMAND_CHAR, ignoreCase = true)) {
-                    var4.message = var5.substring(1)
+                    var4.chatMessage = var5.substring(1)
                     return
                 }
 
@@ -139,9 +123,9 @@ class CommandManager {
                     var1.setCancelled(true)
                     this.method30236()
                     val var6 = var5.substring(CHAT_COMMAND_CHAR.length).split(" ".toRegex()).toTypedArray()
-                    val var7 = this.method30231(var6[0])
+                    val var7 = this.getCommandByName(var6[0])
                     if (var7 == null) {
-                        this.method30234(var6[0])
+                        this.invalidCommandHandler(var6[0])
                         return
                     }
 
