@@ -3,6 +3,7 @@ package info.opensigma.command.impl
 import info.opensigma.command.type.ChatCommandArguments
 import info.opensigma.command.type.ChatCommandExecutor
 import info.opensigma.command.type.Command
+import info.opensigma.command.type.CommandException
 import info.opensigma.command.type.CommandType
 import info.opensigma.util.mc
 import info.opensigma.util.network
