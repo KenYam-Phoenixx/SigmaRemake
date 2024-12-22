@@ -4,6 +4,7 @@ import info.opensigma.OpenSigma
 import info.opensigma.command.type.ChatCommandArguments
 import info.opensigma.command.type.ChatCommandExecutor
 import info.opensigma.command.type.Command
+import info.opensigma.command.type.CommandException
 import info.opensigma.command.type.CommandType
 import kotlinx.io.IOException
 import java.io.File
