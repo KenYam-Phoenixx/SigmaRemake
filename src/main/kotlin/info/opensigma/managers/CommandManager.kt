@@ -8,6 +8,7 @@ import info.opensigma.util.addMessage
 import info.opensigma.util.chatHud
 import info.opensigma.util.mc
 import net.minecraft.command.CommandException
+import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket
 import net.minecraft.text.Text
 import java.util.*
 import kotlin.collections.toTypedArray
@@ -105,10 +106,10 @@ class CommandManager {
     }
 
     @EventTarget
-    private fun onSendPacket(var1: SendPacketEvent) {
+    private fun onSendPacket(event: SendPacketEvent) {
 //        if (OpenSigma.instance.clientMode != ClientMode.NOADDONS) {
-            if (var1.packet is ChatMessageC2SPacket) {
-                val var4 = var1.packet as ChatMessageC2SPacket
+            if (event.packet is ChatMessageC2SPacket) {
+                val var4 = event.packet as ChatMessageC2SPacket
                 val var5 = var4.message
                 if (var5.startsWith(CHAT_COMMAND_CHAR, ignoreCase = true) && var5.substring(1).startsWith(CHAT_COMMAND_CHAR, ignoreCase = true)) {
                     var4.chatMessage = var5.substring(1)
@@ -116,7 +117,7 @@ class CommandManager {
                 }
 
                 if (var5.startsWith(CHAT_COMMAND_CHAR, ignoreCase = true)) {
-                    var1.setCancelled(true)
+                    event.setCancelled(true)
                     this.setUseDefaultPrefix()
                     val args = var5.substring(CHAT_COMMAND_CHAR.length).split(" ".toRegex()).toTypedArray()
                     val cmd = this.getCommandByName(args[0])
@@ -147,10 +148,10 @@ class CommandManager {
                 }
             }
 
-            if (var1.getPacket() instanceof CTabCompletePacket) {
-                CTabCompletePacket var11 = (CTabCompletePacket) var1.getPacket();
-                if (var11.getCommand().startsWith(".")) {
-                    var1.setCancelled(true);
+            if (event.getPacket() is RequestCommandCompletionsC2SPacket) {
+                val packet = event.getPacket() as RequestCommandCompletionsC2SPacket;
+                if (packet.partialCommand.startsWith(".")) {
+                    event.setCancelled(true);
                 }
             }
 //        }
