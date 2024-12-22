@@ -18,17 +18,17 @@ class Config : Command("config", "Manage configs", "configs", "profiles", "profi
         if (arguments.isEmpty()) {
             throw CommandException()
         } else if (arguments.size <= 2) {
-            if (arguments[0].commandType != CommandType.TEXT) {
+            if (arguments[0].getCommandType() != CommandType.TEXT) {
                 throw CommandException()
             } else {
-                val action = arguments[0].arguments.toLowerCase()
+                val action = arguments[0].getArguments().lowercase()
 
                 when {
                     action.equals("load", ignoreCase = true) -> {
                         if (arguments.size != 2) {
                             executor.send("Usage : .config load <name>")
                         } else {
-                            val name = arguments[1].arguments.toLowerCase()
+                            val name = arguments[1].getArguments().lowercase()
                             val config = OpenSigma.instance.configManager.getConfigByName(name)
                             if (config == null) {
                                 executor.send("${this.getConfigOrProfileName()} not found!")
@@ -42,8 +42,8 @@ class Config : Command("config", "Manage configs", "configs", "profiles", "profi
                         if (arguments.size != 2) {
                             executor.send("Usage : .config save <name>")
                         } else {
-                            val name = arguments[1].arguments.toLowerCase()
-                            val ogName = arguments[1].arguments
+                            val name = arguments[1].getArguments().lowercase()
+                            val ogName = arguments[1].getArguments()
                             val currentConfig = OpenSigma.instance.configManager.currentConfig
                             currentConfig.serializedConfigData = OpenSigma.instance.moduleManager.saveCurrentConfigToJSON(JSONObject())
                             OpenSigma.instance.configManager.removeConfig(name)
@@ -55,7 +55,7 @@ class Config : Command("config", "Manage configs", "configs", "profiles", "profi
                         if (arguments.size != 2) {
                             executor.send("Usage : .config remove <name>")
                         } else {
-                            val name = arguments[1].arguments.toLowerCase()
+                            val name = arguments[1].getArguments().lowercase()
                             if (!OpenSigma.instance.configManager.removeConfig(name)) {
                                 executor.send("${this.getConfigOrProfileName()} not found!")
                             } else {
