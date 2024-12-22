@@ -1,5 +1,7 @@
 package info.opensigma.command.type
 
+import kotlin.Double
+
 class ChatCommandArguments(private val arguments: String) {
 
     fun getCommandType(): CommandType {
@@ -13,7 +15,7 @@ class ChatCommandArguments(private val arguments: String) {
         }
     }
 
-    fun method30896(): Double {
+    fun getDouble(): Double {
         return try {
             Double.parseDouble(arguments)
         } catch (e: NullPointerException) {
@@ -23,7 +25,7 @@ class ChatCommandArguments(private val arguments: String) {
         }
     }
 
-    fun method30897(): Float {
+    fun getFloat(): Float {
         return try {
             arguments.toDouble().toFloat()
         } catch (e: NullPointerException) {
@@ -33,7 +35,7 @@ class ChatCommandArguments(private val arguments: String) {
         }
     }
 
-    fun method30898(): Int {
+    fun getInt(): Int {
         return try {
             arguments.toDouble().toInt()
         } catch (e: NullPointerException) {

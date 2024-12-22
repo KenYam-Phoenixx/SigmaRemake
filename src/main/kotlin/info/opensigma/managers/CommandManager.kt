@@ -1,8 +1,8 @@
 package info.opensigma.managers
 
-import info.opensigma.OpenSigma
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket
 import info.opensigma.command.impl.*
+import info.opensigma.command.type.ChatCommandArguments
 import info.opensigma.command.type.Command
 import info.opensigma.util.addMessage
 import info.opensigma.util.chatHud
@@ -14,12 +14,12 @@ import kotlin.collections.toTypedArray
 
 class CommandManager {
     companion object {
-        private val field38299 = mutableListOf<Runnable>()
+        private val runnables = mutableListOf<Runnable>()
         const val CHAT_COMMAND_CHAR = "."
         const val CHAT_PREFIX = "§f[§6Sigma§f]§7"
     }
 
-    private var field38298 = true
+    private var useDefaultPrefix = true
     private val commands = mutableListOf<Command>()
 
     fun init() {
@@ -77,31 +77,31 @@ class CommandManager {
     }
 
     private fun getPrefix(): String {
-        if (this.field38298) {
-            this.field38298 = false
+        if (this.useDefaultPrefix) {
+            this.useDefaultPrefix = false
             return CHAT_PREFIX
         } else {
-            var var3 = ""
+            var result = ""
 
-            for (var4 in 0..7) {
-                var3 = "$var3 "
+            for (_ in 0..7) {
+                result = "$result "
             }
 
-            return "$var3§7"
+            return "$result§7"
         }
     }
 
-    fun method30236() {
-        this.field38298 = true
+    fun setUseDefaultPrefix() {
+        this.useDefaultPrefix = true
     }
 
     @EventTarget
-    private fun method30237(var1: TickEvent) {
-        for (var5 in field38299) {
+    private fun runRunnables(var1: TickEvent) {
+        for (var5 in runnables) {
             var5.run()
         }
 
-        field38299.clear()
+        runnables.clear()
     }
 
     @EventTarget
@@ -117,30 +117,30 @@ class CommandManager {
 
                 if (var5.startsWith(CHAT_COMMAND_CHAR, ignoreCase = true)) {
                     var1.setCancelled(true)
-                    this.method30236()
-                    val var6 = var5.substring(CHAT_COMMAND_CHAR.length).split(" ".toRegex()).toTypedArray()
-                    val var7 = this.getCommandByName(var6[0])
-                    if (var7 == null) {
-                        this.invalidCommandHandler(var6[0])
+                    this.setUseDefaultPrefix()
+                    val args = var5.substring(CHAT_COMMAND_CHAR.length).split(" ".toRegex()).toTypedArray()
+                    val cmd = this.getCommandByName(args[0])
+                    if (cmd == null) {
+                        this.invalidCommandHandler(args[0])
                         return
                     }
 
                     val var8: MutableList<ChatCommandArguments> = mutableListOf()
 
-                    for (var9 in 1 until var6.size) {
-                        var8.add(ChatCommandArguments(var6[var9]))
+                    for (i in 1 until args.size) {
+                        var8.add(ChatCommandArguments(args[i]))
                     }
 
                     mc.chatHud.addMessage(" ")
 
                     try {
-                        var7.run(var5, var8.toTypedArray(), { mc.chatHud.addChatMessage(this.getPrefix() + " " + it) })
-                    } catch (var10: CommandException) {
-                        if (var10.message?.isNotEmpty() == true) {
-                            mc.chatHud.addMessage(this.getPrefix() + " Error: " + var10.message)
+                        cmd.run(var5, var8.toTypedArray(), { mc.chatHud.addChatMessage(this.getPrefix() + " " + it) })
+                    } catch (exception: CommandException) {
+                        if (exception.message?.isNotEmpty() == true) {
+                            mc.chatHud.addMessage(this.getPrefix() + " Error: " + exception.message)
                         }
 
-                        mc.chatHud.addMessage(this.getPrefix() + " Usage: " + "." + var7.getName() + " " + var7.method18326());
+                        mc.chatHud.addMessage(this.getPrefix() + " Usage: " + "." + cmd.name + " " + cmd.method18326());
                     }
 
                     mc.chatHud.addMessage(" ");
