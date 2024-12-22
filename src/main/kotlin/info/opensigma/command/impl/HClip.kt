@@ -1,4 +1,9 @@
 package info.opensigma.command.impl
 
-class HClip {
+import info.opensigma.command.type.Command
+
+class HClip : Command("hclip", "Horizontal Clip", "hc") {
+    init {
+        registerSubCommands("offset")
+    }
 }

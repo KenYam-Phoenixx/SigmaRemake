@@ -1,20 +1,16 @@
 package info.opensigma.managers
 
-//import com.mentalfrostbyte.jello.Client
-//import com.mentalfrostbyte.jello.ClientMode
-//import com.mentalfrostbyte.jello.command.impl.*
-//import com.mentalfrostbyte.jello.event.EventTarget
-//import com.mentalfrostbyte.jello.event.impl.SendPacketEvent
-//import com.mentalfrostbyte.jello.event.impl.TickEvent
-//import com.mentalfrostbyte.jello.util.MultiUtilities
-//import mapped.*
-//import net.minecraft.network.play.client.CChatMessagePacket
-//import net.minecraft.network.play.client.CTabCompletePacket
+import info.opensigma.OpenSigma
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket
-
 import info.opensigma.command.impl.*
 import info.opensigma.command.type.Command
+import info.opensigma.util.addMessage
+import info.opensigma.util.chatHud
+import info.opensigma.util.mc
+import net.minecraft.command.CommandException
+import net.minecraft.text.Text
 import java.util.*
+import kotlin.collections.toTypedArray
 
 class CommandManager {
     companion object {
@@ -76,8 +72,8 @@ class CommandManager {
     }
 
     fun invalidCommandHandler(name: String) {
-        MultiUtilities.addChatMessage(getPrefix() + " Invalid command \"" + CHAT_COMMAND_CHAR + name + "\"")
-        MultiUtilities.addChatMessage(getPrefix() + " Use \"" + CHAT_COMMAND_CHAR + "help\" for a list of commands.")
+        mc.chatHud.addMessage(Text.of(getPrefix() + " Invalid command \"" + CHAT_COMMAND_CHAR + name + "\""))
+        mc.chatHud.addMessage(Text.of(getPrefix() + " Use \"" + CHAT_COMMAND_CHAR + "help\" for a list of commands."))
     }
 
     private fun getPrefix(): String {
@@ -110,7 +106,7 @@ class CommandManager {
 
     @EventTarget
     private fun onSendPacket(var1: SendPacketEvent) {
-        if (Client.getInstance().clientMode != ClientMode.NOADDONS) {
+//        if (OpenSigma.instance.clientMode != ClientMode.NOADDONS) {
             if (var1.packet is ChatMessageC2SPacket) {
                 val var4 = var1.packet as ChatMessageC2SPacket
                 val var5 = var4.message
@@ -135,19 +131,19 @@ class CommandManager {
                         var8.add(ChatCommandArguments(var6[var9]))
                     }
 
-                    MultiUtilities.addChatMessage(" ")
+                    mc.chatHud.addMessage(" ")
 
                     try {
-                        var7.run(var5, var8.toTypedArray(), { MultiUtilities.addChatMessage(this.getPrefix() + " " + it) })
+                        var7.run(var5, var8.toTypedArray(), { mc.chatHud.addChatMessage(this.getPrefix() + " " + it) })
                     } catch (var10: CommandException) {
-                        if (var10.message.length > 0) {
-                            MultiUtilities.addChatMessage(this.getPrefix() + " Error: " + var10.message)
+                        if (var10.message?.isNotEmpty() == true) {
+                            mc.chatHud.addMessage(this.getPrefix() + " Error: " + var10.message)
                         }
 
-                        MultiUtilities.addChatMessage(this.getPrefix() + " Usage: " + "." + var7.getName() + " " + var7.method18326());
+                        mc.chatHud.addMessage(this.getPrefix() + " Usage: " + "." + var7.getName() + " " + var7.method18326());
                     }
 
-                    MultiUtilities.addChatMessage(" ");
+                    mc.chatHud.addMessage(" ");
                 }
             }
 
@@ -157,6 +153,6 @@ class CommandManager {
                     var1.setCancelled(true);
                 }
             }
-        }
+//        }
     }
 }

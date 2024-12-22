@@ -1,6 +1,7 @@
 package info.opensigma.command.type
 
 import net.minecraft.client.MinecraftClient
+import net.minecraft.command.CommandException
 
 abstract class Command(val name: String, val descriptor: String, vararg val alias: String) {
     private val subCommands = mutableListOf<String>()
@@ -16,5 +17,6 @@ abstract class Command(val name: String, val descriptor: String, vararg val alia
         this.subCommands.addAll(subCommands)
     }
 
-    abstract fun run(argument: String, arguments: Array<ChatCommandArguments>, executor: ChatCommandExecutor): Unit
+    @Throws(CommandException::class)
+    abstract fun run(argument: String, arguments: Array<ChatCommandArguments>, executor: ChatCommandExecutor)
 }
