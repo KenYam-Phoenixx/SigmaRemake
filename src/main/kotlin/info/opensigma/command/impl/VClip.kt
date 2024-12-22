@@ -6,7 +6,6 @@ import info.opensigma.command.type.Command
 import info.opensigma.command.type.CommandType
 import info.opensigma.util.mc
 import info.opensigma.util.network
-import net.minecraft.command.CommandException
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket
 
 class VClip : Command("vclip", "Vertical clip through blocks", "vc") {

@@ -7,7 +7,6 @@ import info.opensigma.command.type.Command
 import info.opensigma.util.addMessage
 import info.opensigma.util.chatHud
 import info.opensigma.util.mc
-import net.minecraft.command.CommandException
 import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket
 import net.minecraft.text.Text
 import java.util.*
